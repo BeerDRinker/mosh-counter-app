@@ -1,25 +1,80 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+
+import { Navbar } from './components/Navbar'
+import Counters from './components/Counters'
+
 import './App.scss';
 
 class App extends Component {
+  constructor() {
+    super()
+    console.log(' App - Constructor ');
+	}
+	
+	componentDidMount() {
+		console.log('mounted')
+	}
+
+  state = {
+		counters: [
+			{ id: 1, value: 0 },
+			{ id: 2, value: 0 },
+			{ id: 3, value: 0 },
+			{ id: 4, value: 0 },
+		]
+	}
+
+	handleIncrement = (counter) => {
+		const counters = [ ...this.state.counters ]
+		const index = counters.indexOf(counter)
+		counters[index] = { ...counter }
+		counters[index].value++
+		this.setState({
+			counters
+		})
+	}
+
+	handleDecrement = (counter) => {
+		const counters = [ ...this.state.counters ]
+		const index = counters.indexOf(counter)
+		counters[index] = { ...counter }
+		counters[index].value--
+		this.setState({
+			counters
+		})
+	}
+
+	handleReset = () => {
+		const counters = this.state.counters.map(counter => {
+			counter.value = 0
+			return counter
+		})
+		this.setState({
+			counters
+		})
+	}
+
+	handleDelete = (counterId) => {
+		const counters = this.state.counters.filter(counter => counter.id !== counterId)
+		this.setState({
+			counters
+		})
+	}
+
   render() {
+		console.log('rendered')
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        <Navbar totalCounters={this.state.counters.filter(c => c.value > 0).length} />
+          <main className="container">
+            <Counters
+              onReset={this.handleReset}
+              onIncrement={this.handleIncrement}
+              onDecrement={this.handleDecrement}
+              onDelete={this.handleDelete}
+              counters={this.state.counters}
+            />
+          </main>
       </div>
     );
   }
